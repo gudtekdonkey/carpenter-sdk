@@ -5,7 +5,7 @@ pools keyed by `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an all
 
 | Path | What |
 |---|---|
-| [`packages/sdk`](packages/sdk) | `@carpenter/sdk` (TypeScript): the IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, and the plain-pool quoter (wasm, bundled) |
+| [`packages/sdk`](packages/sdk) | `@floorsupply/carpenter-sdk` (TypeScript): the IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, and the plain-pool quoter (wasm, bundled) |
 | [`crates/`](crates) | Rust: `carpenter-types` (layouts, seeds, constants, the hook interface), `carpenter-clmm-math` (Q64.64 CLMM math, see `NOTICE`), `carpenter-quote` (the network-free quoter, with the `HookQuoter` interface) |
 | [`wasm/`](wasm) | `carpenter-quote-wasm` (the quoter's plain-pool path behind wasm-bindgen) and `build.sh`, which builds what `packages/sdk/wasm/` ships |
 | [`jupiter/`](jupiter) | `carpenter-amm`: a `jupiter-amm-interface` `Amm` over the quoters; its own Cargo workspace |
@@ -43,7 +43,7 @@ two different crates, so `floor-quote`'s `HookQuoter` implementation would not b
 cargo test --workspace                       # crates/
 (cd jupiter && cargo test)                   # the adapter, including the program parity replay
 bash jupiter/upstream/check.sh               # the adapter against the proposed upstream Swap variant
-bash wasm/build.sh && npm run sync-wasm -w @carpenter/sdk
+bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
 npm ci && npm test                           # packages/sdk
 ```
 
@@ -81,8 +81,8 @@ One build serves every cluster it lists; nothing assumes a single cluster's prog
 3. Regenerate and rebuild:
 
    ```sh
-   npm run generate -w @carpenter/sdk           # validates deployments.json → src/generated/
-   bash wasm/build.sh && npm run sync-wasm -w @carpenter/sdk
+   npm run generate -w @floorsupply/carpenter-sdk           # validates deployments.json → src/generated/
+   bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
    cargo test --workspace && (cd jupiter && cargo test) && npm test
    ```
 

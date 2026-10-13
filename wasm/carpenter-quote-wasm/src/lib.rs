@@ -1,6 +1,6 @@
 //! `carpenter-quote-wasm`: the JS surface of `carpenter-quote`'s plain-pool quoter.
 //!
-//! The contract with the TypeScript wrapper (`@carpenter/sdk`'s `createQuoter`):
+//! The contract with the TypeScript wrapper (`@floorsupply/carpenter-sdk`'s `createQuoter`):
 //! - Accounts go in as their raw bytes (`Uint8Array`), as `getAccountInfo` returns them. Tick arrays
 //!   go in CONCATENATED, each a 3,888-byte account body in a 3,888-byte stride (the wrapper slices a
 //!   3,920-byte account to its body). An empty `bitmap` means "not supplied".

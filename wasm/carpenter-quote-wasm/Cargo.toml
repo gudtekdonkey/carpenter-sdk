@@ -1,5 +1,5 @@
 # `carpenter-quote-wasm`: the plain-pool quote path of `carpenter-quote` behind wasm-bindgen, shipped by
-# `@carpenter/sdk` (`packages/sdk/wasm/`). No hook quoter is linked: a hooked pool is refused
+# `@floorsupply/carpenter-sdk` (`packages/sdk/wasm/`). No hook quoter is linked: a hooked pool is refused
 # (`QuoteHookNotQuotable`), and a hook's SDK ships its own wasm.
 #
 # Its own workspace: it builds for wasm32-unknown-unknown and is never a member of the root workspace.

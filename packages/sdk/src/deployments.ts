@@ -110,7 +110,7 @@ export function chainKeyFromGenesisHash(genesisHash: string): string {
 export function deploymentFor(clusterKey: string, file: DeploymentsFile = DEPLOYMENTS): ClusterDeployment {
   const row = file.clusters[clusterKey];
   if (!row) {
-    throw new Error(`@carpenter/sdk: no deployment for cluster "${clusterKey}" (known: ${Object.keys(file.clusters).join(', ')})`);
+    throw new Error(`@floorsupply/carpenter-sdk: no deployment for cluster "${clusterKey}" (known: ${Object.keys(file.clusters).join(', ')})`);
   }
   return row;
 }

@@ -1,4 +1,4 @@
-# @carpenter/sdk
+# @floorsupply/carpenter-sdk
 
 TypeScript SDK for Carpenter, a concentrated-liquidity AMM on Solana with Uniswap-v4-style hooks: pools keyed by
 `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an allowlist of approved hook programs. Pure TypeScript over
@@ -22,7 +22,7 @@ generated client but have no builders here.
 ## Install
 
 ```sh
-npm install @carpenter/sdk @solana/kit@8.3.0
+npm install @floorsupply/carpenter-sdk @solana/kit@8.3.0
 ```
 
 `@solana/kit` is a peer dependency.
@@ -31,7 +31,7 @@ npm install @carpenter/sdk @solana/kit@8.3.0
 
 ```ts
 import { createSolanaRpc } from '@solana/kit';
-import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@carpenter/sdk';
+import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorsupply/carpenter-sdk';
 
 const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
 const src = fromKitRpc(rpc);
@@ -48,12 +48,12 @@ for tests and scripts.
 ```ts
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@carpenter/sdk';
-import { initQuote } from '@carpenter/sdk/quote/wasm';
+import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorsupply/carpenter-sdk';
+import { initQuote } from '@floorsupply/carpenter-sdk/quote/wasm';
 import { getBase64EncodedWireTransaction } from '@solana/kit';
 
-// Node: read the bundled wasm; a browser fetches `@carpenter/sdk/carpenter_quote_bg.wasm` and passes the bytes.
-const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@carpenter/sdk/carpenter_quote_bg.wasm')));
+// Node: read the bundled wasm; a browser fetches `@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
+const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm')));
 const { value: v } = await readSwapQuoteAccounts(src, poolAddress, { radius: 4, ids });
 const q = quoter.quoteSwap({ ...v, zeroForOne: true, amountSpecified: -1_000_000n }); // exact in: negative
 const { starts } = await swapTickArrays(poolAddress, q, ids);
@@ -98,7 +98,7 @@ during the swap.
 ## Create a pool and add liquidity
 
 ```ts
-import { fromKitRpc, planCreatePool, sendSolanaTransactions, NO_HOOK } from '@carpenter/sdk';
+import { fromKitRpc, planCreatePool, sendSolanaTransactions, NO_HOOK } from '@floorsupply/carpenter-sdk';
 
 const plan = await planCreatePool({
   payer, mintA, mintB, tokenProgramA, tokenProgramB, decimalsA: 6, decimalsB: 9,
