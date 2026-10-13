@@ -9,7 +9,7 @@ pools keyed by `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an all
 | [`crates/`](crates) | Rust: `carpenter-types` (layouts, seeds, constants, the hook interface), `carpenter-clmm-math` (Q64.64 CLMM math, see `NOTICE`), `carpenter-quote` (the network-free quoter, with the `HookQuoter` interface) |
 | [`wasm/`](wasm) | `carpenter-quote-wasm` (the quoter's plain-pool path behind wasm-bindgen) and `build.sh`, which builds what `packages/sdk/wasm/` ships |
 | [`jupiter/`](jupiter) | `carpenter-amm`: a `jupiter-amm-interface` `Amm` over the quoters; its own Cargo workspace |
-| [`integrations/defillama/`](integrations/defillama) | Carpenter's DefiLlama TVL adapter, kept here and copied into DefiLlama's repository |
+| [`integrations/defillama/`](integrations/defillama) | Carpenter's DefiLlama adapters (TVL; volume and fees), kept here and copied into DefiLlama's repositories |
 | [`fixtures/quote-vectors`](fixtures/quote-vectors) | golden quote vectors (`plain.json`) and chain-measured outcomes (`parity-plain.json`) |
 
 The programs are upgradeable through a timelock on mainnet-beta (a 10-minute delay that can only be raised, proposed by the deployer key) and by the deployer key directly on devnet, and pausable by the deployer key; nothing here claims they are audited or immutable.
