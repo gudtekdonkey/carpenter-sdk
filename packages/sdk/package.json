@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Carpenter, the AMM on Solana: the carpenter_amm IDL and Codama client, pool / position / tick-array layouts and PDAs, swap and liquidity builders, lookup tables, tick math, the protocol fee, the hook interface, plain-pool quotes.",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gudtekdonkey/carpenter-sdk.git",
@@ -46,7 +49,9 @@
     "wasm",
     "deployments.json",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "NOTICE",
+    "THIRD_PARTY.md"
   ],
   "publishConfig": {
     "access": "public"

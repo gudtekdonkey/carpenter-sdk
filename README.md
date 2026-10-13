@@ -24,16 +24,16 @@ direction each:
   `carpenter-quote`: `floor-quote` implements `HookQuoter`.
 - `jupiter/` (`carpenter-amm`) depends on `floor-sdk`'s `floor-quote` and `floor-types`, to quote FLOOR pools.
 
-Both are git dependencies pinned to the **same release tag** of each repository:
+Both are git dependencies pinned to the **release commit** of each repository, the commit its `v0.1.0` tag names:
 
 ```toml
-# floor-sdk/rust/Cargo.toml
-carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "v0.1.0" }
-# jupiter/Cargo.toml (this repository's own crates stay local through a [patch] of that git source)
-floor-quote     = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "v0.1.0" }
+# floor-sdk/rust/Cargo.toml (carpenter-sdk v0.1.0)
+carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", rev = "6996086514a27c348189f150916fedaa8536c5b5" }
+# jupiter/Cargo.toml (floor-sdk v0.1.0; this repository's own crates stay local through a [patch] of that git source)
+floor-quote     = { git = "https://github.com/gudtekdonkey/floor-sdk", rev = "72399c843d3177333ef3cbf8b06a6d78ec53f1be" }
 ```
 
-The tags must agree: Cargo treats `carpenter-quote` from two different sources (a path and a git tag, or two tags) as
+The pins must agree: Cargo treats `carpenter-quote` from two different sources (a path and a git revision, or two revisions) as
 two different crates, so `floor-quote`'s `HookQuoter` implementation would not be the trait `carpenter-amm` calls.
 `cargo tree -p carpenter-amm -i carpenter-quote` must show a single `carpenter-quote`.
 
