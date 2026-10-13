@@ -839,8 +839,19 @@ fn network_free() {
 #[test]
 fn the_manifest_links_no_math_crate() {
     let manifest = std::fs::read_to_string(crate_root().join("Cargo.toml")).unwrap();
+    // Only the dependency tables link a crate; `[patch]` redirects a source the quoters already use.
+    let mut section = String::new();
+    let mut dep_lines = Vec::new();
+    for l in manifest.lines() {
+        let t = l.trim_start();
+        if t.starts_with('[') {
+            section = t.to_string();
+        } else if section.ends_with("dependencies]") {
+            dep_lines.push(t);
+        }
+    }
     for dep in ["floor-math", "carpenter-clmm-math"] {
-        let declared = manifest.lines().any(|l| l.trim_start().starts_with(&format!("{dep} ")) || l.trim_start().starts_with(&format!("{dep}=")));
+        let declared = dep_lines.iter().any(|l| l.starts_with(&format!("{dep} ")) || l.starts_with(&format!("{dep}=")));
         assert!(!declared, "Cargo.toml declares {dep}");
     }
     for (path, src) in sources() {

@@ -25,15 +25,15 @@ doctest = false
 [dependencies]
 jupiter-amm-interface = { git = "https://github.com/jup-ag/jupiter-amm-interface", rev = "95bd18485e580625a39eb92a0c0ad2061579daad" }
 
-# The quoters. This repository's crates by path; FLOOR's from `floor-sdk` at the release tag with the same
-# version. `floor-sdk` names this repository's crates at that tag too, and the `[patch]` below points those back
+# The quoters. This repository's crates by path; FLOOR's from `floor-sdk` at the release commit with the same
+# version. `floor-sdk` names this repository's crates at that commit too, and the `[patch]` below points those back
 # at the local crates, so the build holds ONE `carpenter-quote` (`cargo tree -i carpenter-quote` shows one).
 # No math crate (`carpenter-clmm-math`, `floor-math`) is a direct dependency: every amount comes from
 # the quoters, and `tests/conformance.rs` fails if either appears here.
 carpenter-types = { path = "../crates/carpenter-types" }
 carpenter-quote = { path = "../crates/carpenter-quote" }
-floor-types = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "v0.1.0" }
-floor-quote = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "v0.1.0" }
+floor-types = { git = "https://github.com/gudtekdonkey/floor-sdk", rev = "72399c843d3177333ef3cbf8b06a6d78ec53f1be" }
+floor-quote = { git = "https://github.com/gudtekdonkey/floor-sdk", rev = "72399c843d3177333ef3cbf8b06a6d78ec53f1be" }
 
 # `curve25519` provides `find_program_address` on host builds.
 solana-pubkey = { version = "4", features = ["curve25519"] }
@@ -59,7 +59,7 @@ sha2 = "0.10"
 [profile.release]
 overflow-checks = true
 
-# floor-sdk's crates name this repository's crates at the release tag; build them against the local ones.
+# floor-sdk's crates name this repository's crates at the release commit; build them against the local ones.
 [patch."https://github.com/gudtekdonkey/carpenter-sdk"]
 carpenter-types = { path = "../crates/carpenter-types" }
 carpenter-clmm-math = { path = "../crates/carpenter-clmm-math" }

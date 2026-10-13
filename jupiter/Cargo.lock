@@ -1124,6 +1124,7 @@ dependencies = [
 [[package]]
 name = "floor-math"
 version = "0.1.0"
+source = "git+https://github.com/gudtekdonkey/floor-sdk?rev=72399c843d3177333ef3cbf8b06a6d78ec53f1be#72399c843d3177333ef3cbf8b06a6d78ec53f1be"
 dependencies = [
  "bytemuck",
  "carpenter-clmm-math",
@@ -1132,6 +1133,7 @@ dependencies = [
 [[package]]
 name = "floor-quote"
 version = "0.1.0"
+source = "git+https://github.com/gudtekdonkey/floor-sdk?rev=72399c843d3177333ef3cbf8b06a6d78ec53f1be#72399c843d3177333ef3cbf8b06a6d78ec53f1be"
 dependencies = [
  "bytemuck",
  "carpenter-quote",
@@ -1142,6 +1144,7 @@ dependencies = [
 [[package]]
 name = "floor-types"
 version = "0.1.0"
+source = "git+https://github.com/gudtekdonkey/floor-sdk?rev=72399c843d3177333ef3cbf8b06a6d78ec53f1be#72399c843d3177333ef3cbf8b06a6d78ec53f1be"
 dependencies = [
  "borsh",
  "bytemuck",
