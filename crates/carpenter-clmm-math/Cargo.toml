@@ -1,0 +1,27 @@
+[package]
+name = "carpenter-clmm-math"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+# Raydium-derived sources are Apache-2.0; `src/swap_math.rs` and `tests/v4_parity.rs` also re-express
+# Uniswap v4-core (MIT). NOTICE carries both texts.
+license = "Apache-2.0 AND MIT"
+publish = false
+description = "Q64.64 concentrated-liquidity math for the Carpenter AMM, adapted from Raydium CLMM ed7c84a5 (Apache-2.0)"
+
+[lib]
+# Raydium ships `doctest = false` too: the rust-muldiv doc examples in full_math.rs describe an i8
+# impl that neither crate has, so they are `text` blocks, not tests.
+doctest = false
+
+[dependencies]
+# crates.io, pinned exactly; never Raydium's git fork of `uint`. Diffed against the fork @ 43a0303b
+# that Raydium's Cargo.lock resolves: `#[cfg(feature = "enable-power")]` on `overflowing_pow` /
+# `checked_pow`, `Eq` on `FromDecStrErr`, one doc comment, and clippy-only rewrites. Nothing here
+# calls pow; no arithmetic differs.
+uint = "=0.9.5"
+
+[dev-dependencies]
+# Test-only, pinned exactly so the generators under the parity vectors cannot move. Recorded in NOTICE.
+quickcheck = "=0.9.2"
+proptest = "=1.11.0"

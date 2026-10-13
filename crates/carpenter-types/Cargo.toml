@@ -1,0 +1,14 @@
+[package]
+name = "carpenter-types"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+description = "Carpenter (Solana AMM): account layouts, seeds, constants, discriminators and the hook interface, as plain bytes. No Solana dependency."
+license = "Apache-2.0"
+publish = false
+
+# Normal dependencies: borsh 1.x and bytemuck only. Keys are [u8; 32]; a client converts.
+# No FLOOR crate: `floor-types` depends on this crate, never the reverse (tests/boundary.rs).
+[dependencies]
+borsh = { version = "1.5.7", features = ["derive"] }
+bytemuck = { version = "1", features = ["derive", "min_const_generics"] }

@@ -1,0 +1,22 @@
+[package]
+name = "carpenter-quote"
+version.workspace = true
+edition.workspace = true
+repository.workspace = true
+description = "Carpenter (Solana AMM): the network-free quoter. Swaps, liquidity and prices from account bytes, with a HookQuoter interface for approved hooks."
+license = "Apache-2.0"
+publish = false
+
+[lib]
+doctest = false
+
+# No Solana crate. The quoter reads ACCOUNT BYTES through carpenter-types and computes with
+# carpenter-clmm-math, the same math the AMM program runs, so it builds for wasm32 unchanged.
+# No hook crate either: a hook's quoter depends on THIS crate and implements `HookQuoter`.
+[dependencies]
+carpenter-types = { path = "../carpenter-types" }
+carpenter-clmm-math = { path = "../carpenter-clmm-math" }
+bytemuck = { version = "1", features = ["derive", "min_const_generics"] }
+
+[dev-dependencies]
+serde_json = "1"

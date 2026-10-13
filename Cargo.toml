@@ -1,0 +1,17 @@
+# Carpenter's public Rust crates. Each crate's normal dependencies are borsh 1.x, bytemuck and
+# uint =0.9.5 from crates.io, plus the sibling crates here, and nothing else: no Solana crate, no git
+# source. The router adapter (`carpenter-amm`, on `jupiter-amm-interface`) links Solana crates and is its
+# own workspace.
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/gudtekdonkey/carpenter-sdk"
+
+# Raydium ships `overflow-checks = true` in release; the quoter relies on checked arithmetic and keeps
+# the runtime check as a backstop.
+[profile.release]
+overflow-checks = true

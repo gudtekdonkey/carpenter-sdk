@@ -1,0 +1,37 @@
+# `carpenter-quote-wasm`: the plain-pool quote path of `carpenter-quote` behind wasm-bindgen, shipped by
+# `@carpenter/sdk` (`packages/sdk/wasm/`). No hook quoter is linked: a hooked pool is refused
+# (`QuoteHookNotQuotable`), and a hook's SDK ships its own wasm.
+#
+# Its own workspace: it builds for wasm32-unknown-unknown and is never a member of the root workspace.
+# `wasm-bindgen` is pinned EQUAL to the CLI that binds it (wasm-bindgen-cli 0.2.128); `../build.sh`
+# refuses a mismatch.
+[workspace]
+
+[package]
+name = "carpenter-quote-wasm"
+version = "0.1.0"
+edition = "2021"
+description = "Carpenter (Solana AMM): the wasm build of carpenter-quote's plain-pool quoter."
+license = "Apache-2.0"
+repository = "https://github.com/gudtekdonkey/carpenter-sdk"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[dependencies]
+carpenter-quote = { path = "../../crates/carpenter-quote" }
+wasm-bindgen = "=0.2.128"
+
+[dev-dependencies]
+bytemuck = "1"
+
+# Size flags only (no wasm-opt).
+[profile.release]
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+overflow-checks = true

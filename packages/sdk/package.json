@@ -1,0 +1,75 @@
+{
+  "name": "@carpenter/sdk",
+  "version": "0.1.0",
+  "description": "Carpenter, the AMM on Solana: the carpenter_amm IDL and Codama client, pool / position / tick-array layouts and PDAs, swap and liquidity builders, lookup tables, tick math, the protocol fee, the hook interface, plain-pool quotes.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gudtekdonkey/carpenter-sdk.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://github.com/gudtekdonkey/carpenter-sdk/tree/main/packages/sdk#readme",
+  "bugs": {
+    "url": "https://github.com/gudtekdonkey/carpenter-sdk/issues"
+  },
+  "keywords": [
+    "solana",
+    "amm",
+    "clmm",
+    "carpenter",
+    "dex"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "carpenter-src": "./src/index.ts",
+      "import": "./dist/index.js"
+    },
+    "./quote/wasm": {
+      "types": "./dist/quote/wasm.d.ts",
+      "carpenter-src": "./src/quote/wasm.ts",
+      "import": "./dist/quote/wasm.js"
+    },
+    "./carpenter_quote_bg.wasm": "./wasm/carpenter_quote_bg.wasm",
+    "./deployments.json": "./deployments.json",
+    "./idl/*.json": "./idl/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "idl",
+    "wasm",
+    "deployments.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "generate": "node scripts/sync-idls.mjs && node scripts/codama.mjs",
+    "sync-wasm": "node scripts/sync-wasm.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0"
+  },
+  "peerDependencies": {
+    "@solana/kit": "^8.3.0"
+  },
+  "devDependencies": {
+    "@codama/nodes-from-anchor": "1.5.5",
+    "@codama/renderers-js": "2.4.0",
+    "@types/node": "24.13.4",
+    "codama": "1.10.2"
+  }
+}

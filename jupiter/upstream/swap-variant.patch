@@ -1,0 +1,33 @@
+diff --git a/interface/src/swap.rs b/interface/src/swap.rs
+index afa04ab..ec93abc 100644
+--- a/interface/src/swap.rs
++++ b/interface/src/swap.rs
+@@ -184,6 +184,28 @@ pub enum Swap {
+     Placeholder {
+         data: Option<Vec<u8>>,
+     },
++    /// Carpenter (`carpenter_amm`): concentrated-liquidity pools, each of which may name one hook
++    /// program from the AMM's allowlist. One variant covers every approved hook: the fields are
++    /// account counts, so the swap's remaining accounts can be delimited without knowing which hook
++    /// a pool uses.
++    ///
++    /// The `swap` instruction's accounts, in order:
++    /// - the 14 fixed accounts;
++    /// - `hook_accounts` accounts of the pool's hook slice (`Pool.hook_callback_accounts` when a
++    ///   swap callback runs, otherwise 0);
++    /// - `tick_arrays` accounts the program resolves by key: the tick arrays the swap and the hook's
++    ///   actions read, then any hook-owned position a hook action modifies;
++    /// - the Token-2022 transfer-hook accounts of the pool's base mint, described by
++    ///   `remaining_accounts_info` (`TransferHookA` for mint0, `TransferHookB` for mint1); `None`
++    ///   when neither mint carries a transfer hook.
++    ///
++    /// Exact-in only. The instruction data is built from `zero_for_one` and the input amount.
++    Carpenter {
++        zero_for_one: bool,
++        hook_accounts: u8,
++        tick_arrays: u8,
++        remaining_accounts_info: Option<RemainingAccountsInfo>,
++    },
+ }
+ 
+ #[derive(Clone, PartialEq, Eq, Debug)]

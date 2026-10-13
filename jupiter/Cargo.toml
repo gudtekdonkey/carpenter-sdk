@@ -1,0 +1,66 @@
+# `carpenter-amm`: the `jupiter-amm-interface` adapter for Carpenter pools.
+#
+# This is its own Cargo workspace, not a member of the root one, with its own `Cargo.lock`. It is the
+# only crate in this repository that links Solana crates (`solana-pubkey`, `solana-instruction`,
+# `solana-account`, through the interface), and the router interface's dependency graph is kept apart
+# from the network-free crates under `../crates`.
+#
+# `jupiter-amm-interface` is a git dependency pinned to a commit, never the crates.io release: the
+# trait on that commit (`AccountProvider`, `Swap::Placeholder`, `AmmError`, a required
+# `get_accounts_len`) is not the trait any published version carries. Moving the pin moves the trait.
+[workspace]
+
+[package]
+name = "carpenter-amm"
+version = "0.1.0"
+edition = "2021"
+description = "Carpenter (Solana AMM): a jupiter-amm-interface `Amm` over carpenter-quote, with FLOOR's hook quoter registered."
+license = "Apache-2.0"
+repository = "https://github.com/gudtekdonkey/carpenter-sdk"
+publish = false
+
+[lib]
+doctest = false
+
+[dependencies]
+jupiter-amm-interface = { git = "https://github.com/jup-ag/jupiter-amm-interface", rev = "95bd18485e580625a39eb92a0c0ad2061579daad" }
+
+# The quoters. This repository's crates by path; FLOOR's from `floor-sdk` at the release tag with the same
+# version. `floor-sdk` names this repository's crates at that tag too, and the `[patch]` below points those back
+# at the local crates, so the build holds ONE `carpenter-quote` (`cargo tree -i carpenter-quote` shows one).
+# No math crate (`carpenter-clmm-math`, `floor-math`) is a direct dependency: every amount comes from
+# the quoters, and `tests/conformance.rs` fails if either appears here.
+carpenter-types = { path = "../crates/carpenter-types" }
+carpenter-quote = { path = "../crates/carpenter-quote" }
+floor-types = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "v0.1.0" }
+floor-quote = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "v0.1.0" }
+
+# `curve25519` provides `find_program_address` on host builds.
+solana-pubkey = { version = "4", features = ["curve25519"] }
+solana-instruction = "3"
+solana-account = "4"
+rust_decimal = "1"
+
+[features]
+# Emit `Swap::Carpenter { .. }` instead of `Swap::Placeholder`. Needs an interface carrying
+# `upstream/swap-variant.patch`; `upstream/check.sh` builds and tests that way without touching this
+# manifest or `Cargo.lock`. It does not compile against the pinned upstream commit.
+upstream-variant = []
+
+[dev-dependencies]
+serde_json = "1"
+solana-clock = "3"
+# Jupiter's parity kit (tests/parity.rs): replays a pool snapshot through `Amm::quote` and the
+# program's own swap in LiteSVM. Same repository and commit as the interface, so the `Amm` trait
+# unifies. Keep `solana-clock` at 3.1.x in the lockfile: LiteSVM 0.14 needs wincode 0.5.
+jupiter-amm-test-kit = { git = "https://github.com/jup-ag/jupiter-amm-interface", rev = "95bd18485e580625a39eb92a0c0ad2061579daad" }
+sha2 = "0.10"
+
+[profile.release]
+overflow-checks = true
+
+# floor-sdk's crates name this repository's crates at the release tag; build them against the local ones.
+[patch."https://github.com/gudtekdonkey/carpenter-sdk"]
+carpenter-types = { path = "../crates/carpenter-types" }
+carpenter-clmm-math = { path = "../crates/carpenter-clmm-math" }
+carpenter-quote = { path = "../crates/carpenter-quote" }

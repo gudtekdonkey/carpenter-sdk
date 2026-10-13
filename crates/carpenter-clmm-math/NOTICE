@@ -1,0 +1,49 @@
+carpenter-clmm-math
+Copyright 2026 FLOOR
+
+This crate contains code derived from Raydium Concentrated Liquidity (raydium-io/raydium-clmm),
+commit ed7c84a54ced59c55981780546adb0b4583dcf85, licensed under the Apache License, Version 2.0
+(a copy is in LICENSE-APACHE-2.0). Upstream ships no NOTICE file of its own. Every derived file
+carries a header naming its upstream path and what FLOOR changed, as Apache-2.0 section 4(b)
+requires.
+
+  src/lib.rs             <- programs/amm/src/libraries/mod.rs (the module list; the glob
+                            re-exports are dropped, and bitmap/error are FLOOR's own)
+  src/big_num.rs         <- programs/amm/src/libraries/big_num.rs
+  src/fixed_point_64.rs  <- programs/amm/src/libraries/fixed_point_64.rs
+  src/unsafe_math.rs     <- programs/amm/src/libraries/unsafe_math.rs
+  src/full_math.rs       <- programs/amm/src/libraries/full_math.rs
+  src/tick_math.rs       <- programs/amm/src/libraries/tick_math.rs
+  src/sqrt_price_math.rs <- programs/amm/src/libraries/sqrt_price_math.rs
+  src/liquidity_math.rs  <- programs/amm/src/libraries/liquidity_math.rs
+  src/swap_math.rs       <- programs/amm/src/libraries/swap_math.rs
+  src/bitmap.rs          <- programs/amm/src/libraries/tick_array_bit_map.rs and
+                            programs/amm/src/states/tick_array.rs (start-index helpers)
+
+src/full_math.rs keeps upstream's credit to sdroege/rust-muldiv (the crate "muldiv"), which is
+licensed MIT, Copyright (c) 2017 Sebastian Dröge.
+
+src/swap_math.rs and tests/v4_parity.rs also re-express behaviour from Uniswap v4-core
+(Uniswap/v4-core@46c6834, src/libraries/{SwapMath,SqrtPriceMath,TickMath}.sol), which are
+licensed MIT (v4-core licenses/MIT_LICENSE @ 46c6834, reproduced):
+
+  Copyright 2023 Universal Navigation Inc.
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without
+  restriction, including without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following conditions: The above copyright
+  notice and this permission notice shall be included in all copies or substantial portions of
+  the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+  PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  DEALINGS IN THE SOFTWARE.
+
+No code from Orca Whirlpools, and nothing from any BUSL-1.1 Uniswap file, is in this crate.
+
+Third-party crates (not vendored): uint 0.9.5 (MIT OR Apache-2.0, crates.io). Test-only, pinned:
+quickcheck 0.9.2 (Unlicense OR MIT), proptest 1.11.0 (MIT OR Apache-2.0).
+
+The package's SPDX expression is "Apache-2.0 AND MIT" for the two files named above.

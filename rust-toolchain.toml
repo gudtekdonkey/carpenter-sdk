@@ -1,0 +1,4 @@
+# The Rust release the crates are built and tested with.
+[toolchain]
+channel = "1.98.1"
+profile = "minimal"
