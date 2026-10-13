@@ -7,6 +7,7 @@ repository, at the same path, and opened as a pull request there.
 |---|---|---|
 | [`DefiLlama-Adapters/projects/carpenter/index.js`](DefiLlama-Adapters/projects/carpenter/index.js) | DefiLlama-Adapters | TVL on Solana |
 | [`dimension-adapters/dexs/carpenter/index.ts`](dimension-adapters/dexs/carpenter/index.ts) | [DefiLlama/dimension-adapters](https://github.com/DefiLlama/dimension-adapters) | Volume and fees on Solana |
+| [`DefiLlama-Adapters/projects/treasury/carpenter.js`](DefiLlama-Adapters/projects/treasury/carpenter.js) | DefiLlama-Adapters | Treasury: the protocol treasury |
 | [`PR-tvl.md`](PR-tvl.md), [`PR-volume.md`](PR-volume.md) | the two pull request bodies | |
 
 ## What it counts
