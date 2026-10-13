@@ -69,7 +69,7 @@ await sendSolanaTransactions(wallet, [getBase64EncodedWireTransaction(transactio
 
 The quoter is the program's own quoting crate (`carpenter-quote`) compiled to wasm and shipped in this package
 (`wasm/`, `WASM_SHA256`); every number a quote returns is the crate's. It quotes pools with no swap hook: a pool whose
-hook takes part in swaps is refused (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floor/sdk-solana` for
+hook takes part in swaps is refused (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorsupply/sdk-solana` for
 FLOOR pools). A paused pool is refused `PoolPaused`; a guardian pause (`Pool.guardianPausedUntil`, a unix time) is not
 judged by the quoter, which reads no clock: check `poolPausedAt(pool, nowUnix)` against the cluster's clock.
 `simulateTransaction` stays the final check before signing.
@@ -88,10 +88,10 @@ used nor closed, so wSOL already held is left as it is. Name an account (`trader
 to use the wSOL ATA with no wrapping at all.
 
 A hooked pool needs its hook's accounts (`hookSlice`) and compute (`cuUnits`): the hook's own SDK provides them
-(`@floor/sdk-solana` for FLOOR pools). `readSwapQuoteAccounts` refuses a hooked pool by name.
+(`@floorsupply/sdk-solana` for FLOOR pools). `readSwapQuoteAccounts` refuses a hooked pool by name.
 
 FLOOR pools use the four-account FLOOR hook slice, which the mainnet and devnet deployments this release lists carry
-(`@floor/sdk-solana` of the same release builds it). A hook that settles (`HOOK_FLAGS.SETTLES`) is called under the
+(`@floorsupply/sdk-solana` of the same release builds it). A hook that settles (`HOOK_FLAGS.SETTLES`) is called under the
 `["hook_settle", pool]` signer, which leads its slice (`findHookSettle`); pass `writableMints` when it mints into a vault
 during the swap.
 

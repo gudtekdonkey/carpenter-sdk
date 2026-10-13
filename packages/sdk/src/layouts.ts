@@ -238,7 +238,7 @@ export const PROTOCOL_TREASURY = def('ProtocolTreasury', 104, d(0xa2, 0x1a, 0x7b
   ['reserved', 72, bytes(32)],
 ]);
 
-/** Every `carpenter_amm` account layout (`@floor/sdk-solana`'s `LAYOUTS` appends FLOOR's). */
+/** Every `carpenter_amm` account layout (`@floorsupply/sdk-solana`'s `LAYOUTS` appends FLOOR's). */
 export const LAYOUTS: readonly LayoutDef[] = [
   AMM_CONFIG, APPROVED_HOOK, MINT_EXCLUSIVITY, MINT_POOL_COUNT, QUOTE_MINT, POOL, TICK_ARRAY_BITMAP, TICK_ARRAY, POSITION,
   POOL_INDEX_ENTRY,
