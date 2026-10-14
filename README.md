@@ -7,7 +7,7 @@ and aggregators.
 
 | | |
 |---|---|
-| Release | `0.1.0` |
+| Release | `0.1.1` |
 | npm | `@floorlaunchpad/carpenter-sdk` (peer: `@solana/kit` `8.3.0`) |
 | Rust | git dependencies at tag `0.1.0` (not on crates.io) |
 | Docs | [floor.supply/developers/carpenter](https://floor.supply/developers/carpenter) |

@@ -18,6 +18,14 @@ while the version is `0.x`, a minor release may change the API.
 
 - The npm package now ships `NOTICE` and `THIRD_PARTY.md` beside the quoter wasm it bundles.
 
+## 0.1.1
+
+### Fixed
+
+- `buildInitializePool` (and so `planCreatePool`) set a 120,000 CU limit, below what `initialize_pool` uses (106k – 129k
+  measured on devnet), so creating a pool failed with `ComputationalBudgetExceeded`. `CU_LIMITS.initializePool` is now
+  195,000. The Rust crates are unchanged from 0.1.0.
+
 ## 0.1.0
 
 First release: `@floorlaunchpad/carpenter-sdk`; the `carpenter-types`, `carpenter-clmm-math` and `carpenter-quote` crates; the quoter

@@ -1,6 +1,6 @@
 {
   "name": "@floorlaunchpad/carpenter-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Carpenter, the AMM on Solana: the carpenter_amm IDL and Codama client, pool / position / tick-array layouts and PDAs, swap and liquidity builders, lookup tables, tick math, the protocol fee, the hook interface, plain-pool quotes.",
   "license": "Apache-2.0",
   "engines": {

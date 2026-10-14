@@ -156,7 +156,9 @@ export const LEGACY_TX_BYTES = 1_232;
 export const CU_LIMITS = {
   swapPlain: 90_000, // 60k [est.] × 1.5
   modifyLiquidity: 90_000, // 60k [est.] × 1.5 — the instruction alone: buildModifyLiquidity adds one `ataCreate` per side
-  initializePool: 120_000, // 80k [est.] × 1.5
+  // Measured on devnet over plain pools (Token and Token-2022 mints, wSOL, a mint's first and a later pool):
+  // 106,069 – 129,378 CU, the spread from the PDA bump searches.
+  initializePool: 195_000, // 130k measured × 1.5
   initializeTickArray: 30_000, // a single Anchor init [est.]
   closePosition: 20_000, // [est.]
   // ONE `close_tick_array` — a PDA derivation, the bitmap check, a 3,840-byte zero scan, an Anchor close and emit_cpi.
