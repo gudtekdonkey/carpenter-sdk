@@ -10,7 +10,7 @@
  * - on a CPI-Guard Token-2022 source puts `ApproveChecked(delegate = pool)` IMMEDIATELY before the program instruction,
  *   in the same message, and `Revoke` after it when a residual delegation can remain.
  * The builders are HOOK-AGNOSTIC: a hooked pool takes its `hookSlice` (and `cuUnits` on a swap) from the caller, and a
- * hook's SDK wraps them with its defaults (`@floorsupply/sdk-solana` for FLOOR pools).
+ * hook's SDK wraps them with its defaults (`@floorlaunchpad/sdk-solana` for FLOOR pools).
  */
 
 import { AccountRole, type AccountMeta, type Address, type Blockhash, type Instruction } from '@solana/kit';
@@ -139,7 +139,7 @@ export interface BuildSwapArgs {
   destinationRequiresMemo?: boolean;
   /**
    * The hook slice — REQUIRED on a hooked pool: the accounts the approved hook's callbacks read, in its order (Carpenter
-   * names none of its own). a FLOOR pool's default slice is `@floorsupply/sdk-solana`'s (`floorSwapHookSlice`,
+   * names none of its own). a FLOOR pool's default slice is `@floorlaunchpad/sdk-solana`'s (`floorSwapHookSlice`,
    * and its own `buildSwap` fills it).
    */
   hookSlice?: readonly AccountMeta[];
@@ -159,7 +159,7 @@ export interface BuildSwapArgs {
   wsolRentLamports?: bigint;
   /**
    * A Token-2022 TRANSFER HOOK's extra accounts for a leg whose mint carries one. FLOOR's `transferHook` option, which derives these for a
-   * holders-hooked launch and opens the buyer's record, is `@floorsupply/sdk-solana`'s `buildSwap`.
+   * holders-hooked launch and opens the buyer's record, is `@floorlaunchpad/sdk-solana`'s `buildSwap`.
    */
   transferHookAccounts?: readonly AccountMeta[];
   /**
@@ -458,7 +458,7 @@ export interface BuildModifyLiquidityArgs {
   /**
    * A Token-2022 TRANSFER HOOK's extra accounts for a leg whose mint carries one, and the
    * compute their `execute` adds (`transferHookCu`, default 0). FLOOR's `transferHook` option is
-   * `@floorsupply/sdk-solana`'s `buildModifyLiquidity`.
+   * `@floorlaunchpad/sdk-solana`'s `buildModifyLiquidity`.
    */
   transferHookAccounts?: readonly AccountMeta[];
   transferHookCu?: number;

@@ -372,7 +372,7 @@ export interface SwapAccounts {
   tokenProgram1: Address;
   hookProgram: Address | null;
   /** The hook slice first, then the UNORDERED tick-array / action-position set. FLOOR: `[floor_pool w, trader_bucket w, hook event_authority r, floor_hook r]` — the bucket the SIGNER's
-   *  `["trader_ref", trader, mint0]`, then the callbacks' `#[event_cpi]` pair (`floorSwapHookSlice` in `@floorsupply/sdk-solana`). */
+   *  `["trader_ref", trader, mint0]`, then the callbacks' `#[event_cpi]` pair (`floorSwapHookSlice` in `@floorlaunchpad/sdk-solana`). */
   hookSlice: readonly AccountMeta[];
   tickArrays: readonly Address[];
   actionPositions: readonly Address[];

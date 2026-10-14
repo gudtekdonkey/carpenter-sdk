@@ -12,7 +12,7 @@
  *   bare), and never throws. `<Name>` is the chain's own error name; it becomes `QuoteError.code`.
  * Nothing here computes a number: every figure is the wasm's, i.e. `carpenter-quote`'s.
  * A pool whose hook takes part in swaps is refused (`QuoteHookNotQuotable`): its hook's SDK quotes it (FLOOR pools:
- * `@floorsupply/sdk-solana`). The quoter is advisory; `simulateTransaction` stays the final check before a wallet signs.
+ * `@floorlaunchpad/sdk-solana`). The quoter is advisory; `simulateTransaction` stays the final check before a wallet signs.
  * This module never imports the wasm glue (`./wasm.ts` does), so tests run it over a fake `QuoteFns`.
  */
 

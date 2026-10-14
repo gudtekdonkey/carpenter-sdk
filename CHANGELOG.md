@@ -7,7 +7,7 @@ while the version is `0.x`, a minor release may change the API.
 
 ### Changed
 
-- The package is published as `@floorsupply/carpenter-sdk` (the `@carpenter` npm scope belongs to another account).
+- The package is published as `@floorlaunchpad/carpenter-sdk` (the `@carpenter` npm scope belongs to another account).
 
 ### Added
 
@@ -20,5 +20,5 @@ while the version is `0.x`, a minor release may change the API.
 
 ## 0.1.0
 
-First release: `@floorsupply/carpenter-sdk`; the `carpenter-types`, `carpenter-clmm-math` and `carpenter-quote` crates; the quoter
+First release: `@floorlaunchpad/carpenter-sdk`; the `carpenter-types`, `carpenter-clmm-math` and `carpenter-quote` crates; the quoter
 wasm; `carpenter-amm`.

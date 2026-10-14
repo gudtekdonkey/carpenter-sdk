@@ -23,7 +23,7 @@ export interface Pda {
 
 /**
  * Program ids, overridable per deployment (tests, a redeployed devnet). Carpenter needs only its own;
- * a hook's SDK extends this shape with its programs (`@floorsupply/sdk-solana`'s `ProgramIds` does), and any
+ * a hook's SDK extends this shape with its programs (`@floorlaunchpad/sdk-solana`'s `ProgramIds` does), and any
  * such object is accepted wherever this one is.
  */
 export interface ProgramIds {

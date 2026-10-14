@@ -6,7 +6,7 @@
  *    the same layouts the program uses, so a field cannot be mis-transcribed between a read and a quote. These helpers
  *    gather the bytes in as few RPC calls as possible and tag them with the OLDEST slot among the reads.
  * Program ids come from `deployments.json`, never a constant; `DEFAULT_PROGRAM_IDS` exists for tests and scripts.
- * A hooked pool needs its hook's accounts as well: read it with that hook's SDK (`@floorsupply/sdk-solana` for FLOOR pools).
+ * A hooked pool needs its hook's accounts as well: read it with that hook's SDK (`@floorlaunchpad/sdk-solana` for FLOOR pools).
  */
 
 import { address, type Address } from '@solana/kit';
@@ -40,7 +40,7 @@ export interface SwapQuoteAccounts extends Omit<SwapQuoteInput, 'zeroForOne' | '
  * Read a PLAIN pool's quoting accounts: the pool, its bitmap, the initialized tick arrays within
  * `radius` arrays of the current tick on both sides (or exactly `starts`). Two round trips (pool + bitmap, then the
  * arrays). a HOOKED pool is refused by name — its quote also needs the hook's own accounts, which
- * the hook's SDK reads (`@floorsupply/sdk-solana`'s `readSwapQuoteAccounts` reads a FLOOR pool's `FloorPool` and base mint).
+ * the hook's SDK reads (`@floorlaunchpad/sdk-solana`'s `readSwapQuoteAccounts` reads a FLOOR pool's `FloorPool` and base mint).
  * A walk that leaves the window fails `TickArrayMissing{start_index}`; widen `radius` or pass
  *    the named start in `starts` and read again. The quoter says which array it needs.
  */

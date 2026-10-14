@@ -8,7 +8,7 @@ and aggregators.
 | | |
 |---|---|
 | Release | `v0.1.0` |
-| npm | `@floorsupply/carpenter-sdk` (peer: `@solana/kit` `8.3.0`) |
+| npm | `@floorlaunchpad/carpenter-sdk` (peer: `@solana/kit` `8.3.0`) |
 | Rust | git dependencies at tag `v0.1.0` (not on crates.io) |
 | Docs | [floor.supply/developers/carpenter](https://floor.supply/developers/carpenter) |
 | Licence | Apache-2.0 |
@@ -31,7 +31,7 @@ are audited or immutable.
 ## Install
 
 ```sh
-npm install @floorsupply/carpenter-sdk @solana/kit@8.3.0
+npm install @floorlaunchpad/carpenter-sdk @solana/kit@8.3.0
 ```
 
 The quoter wasm is shipped in the package, so no Rust toolchain is needed.
@@ -47,7 +47,7 @@ carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag =
 
 ```ts
 import { createSolanaRpc } from '@solana/kit';
-import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorsupply/carpenter-sdk';
+import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorlaunchpad/carpenter-sdk';
 
 const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
 const src = fromKitRpc(rpc);
@@ -64,12 +64,12 @@ and scripts.
 ```ts
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorsupply/carpenter-sdk';
-import { initQuote } from '@floorsupply/carpenter-sdk/quote/wasm';
+import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorlaunchpad/carpenter-sdk';
+import { initQuote } from '@floorlaunchpad/carpenter-sdk/quote/wasm';
 import { getBase64EncodedWireTransaction } from '@solana/kit';
 
-// Node: read the shipped wasm. A browser fetches `@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
-const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm')));
+// Node: read the shipped wasm. A browser fetches `@floorlaunchpad/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
+const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorlaunchpad/carpenter-sdk/carpenter_quote_bg.wasm')));
 
 const { value: v } = await readSwapQuoteAccounts(src, poolAddress, { radius: 4, ids });
 const q = quoter.quoteSwap({ ...v, zeroForOne: true, amountSpecified: -1_000_000n }); // negative: exact in
@@ -88,7 +88,7 @@ await sendSolanaTransactions(wallet, [getBase64EncodedWireTransaction(transactio
 Things a trading integration must know:
 
 - **Hooked pools.** The quoter quotes pools with no swap hook. A pool whose hook takes part in swaps is refused
-  (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorsupply/sdk-solana` for FLOOR pools).
+  (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorlaunchpad/sdk-solana` for FLOOR pools).
 - **Slippage.** An exact-in swap's `amountLimit` is the minimum out and is required: `0` is refused unless
   `allowNoMinimum: true`.
 - **Native SOL.** A wSOL side goes through a temporary wSOL account the builder creates, funds and closes in the same
@@ -108,14 +108,14 @@ Liquidity, pool creation, the wallet prompt table and the send caveats: [`packag
 
 The shipped IDL and the generated client name the mainnet program. Devnet runs the same program source under its own id:
 pass its row's ids. Machine-readable: [`packages/sdk/deployments.json`](packages/sdk/deployments.json)
-(`@floorsupply/carpenter-sdk/deployments.json`). FLOOR's program ids are in [`floor-sdk`](https://github.com/gudtekdonkey/floor-sdk#solana-programs).
+(`@floorlaunchpad/carpenter-sdk/deployments.json`). FLOOR's program ids are in [`floor-sdk`](https://github.com/gudtekdonkey/floor-sdk#solana-programs).
 
 | What | Where | Import |
 |---|---|---|
-| IDL (`carpenter_amm`) | [`packages/sdk/idl/carpenter_amm.json`](packages/sdk/idl/carpenter_amm.json) | `@floorsupply/carpenter-sdk/idl/carpenter_amm.json` |
-| Codama client | `packages/sdk/src/generated/` | `carpenterAmm` from `@floorsupply/carpenter-sdk` |
-| Account layouts (`AmmConfig`, `Pool`, `TickArray`, `Position`, the hook allowlist, the quote roster) | `packages/sdk/src/`, `crates/carpenter-types` | `decodePool`, … from `@floorsupply/carpenter-sdk` |
-| Events | `packages/sdk/src/events.ts` | `decodeInnerInstructionEvents`, `decodeEmitCpiData`, `decodeLogEvents`, `EVENT_NAMES` from `@floorsupply/carpenter-sdk` |
+| IDL (`carpenter_amm`) | [`packages/sdk/idl/carpenter_amm.json`](packages/sdk/idl/carpenter_amm.json) | `@floorlaunchpad/carpenter-sdk/idl/carpenter_amm.json` |
+| Codama client | `packages/sdk/src/generated/` | `carpenterAmm` from `@floorlaunchpad/carpenter-sdk` |
+| Account layouts (`AmmConfig`, `Pool`, `TickArray`, `Position`, the hook allowlist, the quote roster) | `packages/sdk/src/`, `crates/carpenter-types` | `decodePool`, … from `@floorlaunchpad/carpenter-sdk` |
+| Events | `packages/sdk/src/events.ts` | `decodeInnerInstructionEvents`, `decodeEmitCpiData`, `decodeLogEvents`, `EVENT_NAMES` from `@floorlaunchpad/carpenter-sdk` |
 | Quote vectors (golden and chain-measured) | [`fixtures/quote-vectors/`](fixtures/quote-vectors) | — |
 
 The IDL ships without its `docs` fields and with a few error `msg` strings shortened; error names and codes are
@@ -126,7 +126,7 @@ but have no builders.
 
 | Path | What |
 |---|---|
-| [`packages/sdk`](packages/sdk) | `@floorsupply/carpenter-sdk`: IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, the plain-pool quoter (wasm) |
+| [`packages/sdk`](packages/sdk) | `@floorlaunchpad/carpenter-sdk`: IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, the plain-pool quoter (wasm) |
 | [`crates/`](crates) | `carpenter-types` (layouts, seeds, constants, the hook interface), `carpenter-clmm-math` (Q64.64 CLMM math, see `NOTICE`), `carpenter-quote` (the network-free quoter, with `HookQuoter`) |
 | [`wasm/`](wasm) | `carpenter-quote-wasm` and `build.sh`, which builds what `packages/sdk/wasm/` ships |
 | [`jupiter/`](jupiter) | `carpenter-amm`: a `jupiter-amm-interface` `Amm` over the quoters; its own Cargo workspace |

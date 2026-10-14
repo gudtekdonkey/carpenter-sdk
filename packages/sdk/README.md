@@ -1,4 +1,4 @@
-# @floorsupply/carpenter-sdk
+# @floorlaunchpad/carpenter-sdk
 
 TypeScript SDK for Carpenter, a concentrated-liquidity AMM on Solana with Uniswap-v4-style hooks: pools keyed by
 `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an allowlist of approved hook programs. Pure TypeScript over
@@ -22,7 +22,7 @@ generated client but have no builders here.
 ## Install
 
 ```sh
-npm install @floorsupply/carpenter-sdk @solana/kit@8.3.0
+npm install @floorlaunchpad/carpenter-sdk @solana/kit@8.3.0
 ```
 
 `@solana/kit` is a peer dependency.
@@ -31,7 +31,7 @@ npm install @floorsupply/carpenter-sdk @solana/kit@8.3.0
 
 ```ts
 import { createSolanaRpc } from '@solana/kit';
-import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorsupply/carpenter-sdk';
+import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorlaunchpad/carpenter-sdk';
 
 const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
 const src = fromKitRpc(rpc);
@@ -48,12 +48,12 @@ for tests and scripts.
 ```ts
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorsupply/carpenter-sdk';
-import { initQuote } from '@floorsupply/carpenter-sdk/quote/wasm';
+import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorlaunchpad/carpenter-sdk';
+import { initQuote } from '@floorlaunchpad/carpenter-sdk/quote/wasm';
 import { getBase64EncodedWireTransaction } from '@solana/kit';
 
-// Node: read the bundled wasm; a browser fetches `@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
-const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm')));
+// Node: read the bundled wasm; a browser fetches `@floorlaunchpad/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
+const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorlaunchpad/carpenter-sdk/carpenter_quote_bg.wasm')));
 const { value: v } = await readSwapQuoteAccounts(src, poolAddress, { radius: 4, ids });
 const q = quoter.quoteSwap({ ...v, zeroForOne: true, amountSpecified: -1_000_000n }); // exact in: negative
 const { starts } = await swapTickArrays(poolAddress, q, ids);
@@ -69,7 +69,7 @@ await sendSolanaTransactions(wallet, [getBase64EncodedWireTransaction(transactio
 
 The quoter is the program's own quoting crate (`carpenter-quote`) compiled to wasm and shipped in this package
 (`wasm/`, `WASM_SHA256`); every number a quote returns is the crate's. It quotes pools with no swap hook: a pool whose
-hook takes part in swaps is refused (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorsupply/sdk-solana` for
+hook takes part in swaps is refused (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorlaunchpad/sdk-solana` for
 FLOOR pools). A paused pool is refused `PoolPaused`; a guardian pause (`Pool.guardianPausedUntil`, a unix time) is not
 judged by the quoter, which reads no clock: check `poolPausedAt(pool, nowUnix)` against the cluster's clock.
 `simulateTransaction` stays the final check before signing.
@@ -88,17 +88,17 @@ used nor closed, so wSOL already held is left as it is. Name an account (`trader
 to use the wSOL ATA with no wrapping at all.
 
 A hooked pool needs its hook's accounts (`hookSlice`) and compute (`cuUnits`): the hook's own SDK provides them
-(`@floorsupply/sdk-solana` for FLOOR pools). `readSwapQuoteAccounts` refuses a hooked pool by name.
+(`@floorlaunchpad/sdk-solana` for FLOOR pools). `readSwapQuoteAccounts` refuses a hooked pool by name.
 
 FLOOR pools use the four-account FLOOR hook slice, which the mainnet and devnet deployments this release lists carry
-(`@floorsupply/sdk-solana` of the same release builds it). A hook that settles (`HOOK_FLAGS.SETTLES`) is called under the
+(`@floorlaunchpad/sdk-solana` of the same release builds it). A hook that settles (`HOOK_FLAGS.SETTLES`) is called under the
 `["hook_settle", pool]` signer, which leads its slice (`findHookSettle`); pass `writableMints` when it mints into a vault
 during the swap.
 
 ## Create a pool and add liquidity
 
 ```ts
-import { fromKitRpc, planCreatePool, sendSolanaTransactions, NO_HOOK } from '@floorsupply/carpenter-sdk';
+import { fromKitRpc, planCreatePool, sendSolanaTransactions, NO_HOOK } from '@floorlaunchpad/carpenter-sdk';
 
 const plan = await planCreatePool({
   payer, mintA, mintB, tokenProgramA, tokenProgramB, decimalsA: 6, decimalsB: 9,

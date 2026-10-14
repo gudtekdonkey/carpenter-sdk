@@ -176,6 +176,6 @@ export type CuLimitKey = keyof typeof CU_LIMITS;
 /**
  * `RequestHeapFrame` sizes, in bytes, per `CU_LIMITS` key (a multiple of 1,024, from 32 KiB to 256 KiB). No
  * `carpenter_amm` builder requests one: every AMM instruction runs on the default 32 KiB heap. A hook's SDK that
- * needs a frame for its own builders keeps its own table (`@floorsupply/sdk-solana` does, for the ratchet).
+ * needs a frame for its own builders keeps its own table (`@floorlaunchpad/sdk-solana` does, for the ratchet).
  */
 export const HEAP_FRAMES: Readonly<Partial<Record<CuLimitKey, number>>> = {};

@@ -1,8 +1,8 @@
 /**
- * `@floorsupply/carpenter-sdk`: Carpenter, the AMM on Solana — the `carpenter_amm` IDL and its Codama client (`carpenterAmm`),
+ * `@floorlaunchpad/carpenter-sdk`: Carpenter, the AMM on Solana — the `carpenter_amm` IDL and its Codama client (`carpenterAmm`),
  * account layouts and PDAs, read helpers (`stateView`), transaction builders (v0 + lookup tables), the one-prompt
  * sender, event decoders, tick math, the protocol fee, the hook interface, and plain-pool quotes through the wasm
- * quoter's wrapper. Pure TypeScript over `@solana/kit` 8.3.0. Hooks build on it (`@floorsupply/sdk-solana` for FLOOR).
+ * quoter's wrapper. Pure TypeScript over `@solana/kit` 8.3.0. Hooks build on it (`@floorlaunchpad/sdk-solana` for FLOOR).
  */
 
 export * from './constants.ts';

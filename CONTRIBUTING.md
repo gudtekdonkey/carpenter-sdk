@@ -8,7 +8,7 @@ How this repository is built, tested and extended. For using the SDK, see [`READ
 cargo test --workspace                       # crates/
 (cd jupiter && cargo test)                   # the adapter, including the program parity replay
 bash jupiter/upstream/check.sh               # the adapter against the proposed upstream Swap variant
-bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
+bash wasm/build.sh && npm run sync-wasm -w @floorlaunchpad/carpenter-sdk
 npm ci && npm test                           # packages/sdk
 ```
 
@@ -59,8 +59,8 @@ One build serves every cluster it lists; nothing assumes a single cluster's prog
 3. Regenerate and rebuild:
 
    ```sh
-   npm run generate -w @floorsupply/carpenter-sdk           # validates deployments.json → src/generated/
-   bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
+   npm run generate -w @floorlaunchpad/carpenter-sdk           # validates deployments.json → src/generated/
+   bash wasm/build.sh && npm run sync-wasm -w @floorlaunchpad/carpenter-sdk
    cargo test --workspace && (cd jupiter && cargo test) && npm test
    ```
 
