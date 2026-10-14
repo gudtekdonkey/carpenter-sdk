@@ -1,93 +1,140 @@
 # carpenter-sdk
 
 SDKs for Carpenter, a concentrated-liquidity AMM on Solana with Uniswap-v4-style hooks (the `carpenter_amm` program):
-pools keyed by `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an allowlist of approved hook programs.
+pools keyed by `(mint0, mint1, fee, tickSpacing, hook)`, outside LPs, and an allowlist of approved hook programs. Read
+pools, quote and build swaps, add and remove liquidity, and create pools. Rust crates and a Jupiter adapter serve routers
+and aggregators.
+
+| | |
+|---|---|
+| Release | `v0.1.0` |
+| npm | `@floorsupply/carpenter-sdk` (peer: `@solana/kit` `8.3.0`) |
+| Rust | git dependencies at tag `v0.1.0` (not on crates.io) |
+| Docs | [floor.supply/developers/carpenter](https://floor.supply/developers/carpenter) |
+| Licence | Apache-2.0 |
+
+The programs are upgradeable through a timelock on mainnet-beta (a 10-minute delay that can only be raised, proposed by
+the deployer key) and by the deployer key directly on devnet, and pausable by the deployer key. Nothing here claims they
+are audited or immutable.
+
+## Start here
+
+| You build | Use | Read |
+|---|---|---|
+| **A listing app or data site** (pool lists, token pages, screeners, TVL) | `stateView` reads (every read tagged with its slot), the account decoders and the event decoders; DefiLlama's adapters are in [`integrations/defillama`](integrations/defillama). | [Read a pool](#read-a-pool) · [Interfaces](#addresses-and-interfaces) |
+| **An aggregator or router** | Rust: `carpenter-quote` (the network-free quoter, the program's own arithmetic) and `carpenter-amm` (a `jupiter-amm-interface` `Amm`, FLOOR pools included). | [`jupiter/`](jupiter) · [`crates/`](crates) |
+| **A terminal, trading app or bot** | The wasm quoter, `buildSwap` and `sendSolanaTransactions` (one wallet prompt per action with a batch-signing wallet). | [Quote and swap](#quote-and-swap) · [`packages/sdk`](packages/sdk/README.md) |
+| **A liquidity app** | `buildModifyLiquidity` (add, remove, collect fees) and `planCreatePool`. | [`packages/sdk`](packages/sdk/README.md#create-a-pool-and-add-liquidity) |
+| **A hook author** | `carpenter_quote::HookQuoter`: an approved hook that changes swaps ships a Rust replay of its callbacks, so routers can quote its pools. | [`crates/carpenter-quote`](crates/carpenter-quote) |
+| **Trading FLOOR launches** | FLOOR pools are hooked Carpenter pools, quoted and traded by FLOOR's own SDK. | [`floor-sdk`](https://github.com/gudtekdonkey/floor-sdk) |
+
+## Install
+
+```sh
+npm install @floorsupply/carpenter-sdk @solana/kit@8.3.0
+```
+
+The quoter wasm is shipped in the package, so no Rust toolchain is needed.
+
+```toml
+# Rust
+[dependencies]
+carpenter-types = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "v0.1.0" }
+carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "v0.1.0" }
+```
+
+## Read a pool
+
+```ts
+import { createSolanaRpc } from '@solana/kit';
+import { deploymentFor, fromKitRpc, MAINNET_CHAIN_KEY, programIdsFromDeployment, stateView } from '@floorsupply/carpenter-sdk';
+
+const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
+const src = fromKitRpc(rpc);
+const ids = programIdsFromDeployment(deploymentFor(MAINNET_CHAIN_KEY)); // DEVNET_CHAIN_KEY for devnet
+
+const { slot, value: pool } = await stateView.getPool(src, poolAddress, ids);
+```
+
+Take program ids from `deploymentFor`, never from a constant in an app. `DEFAULT_PROGRAM_IDS` (mainnet's) is for tests
+and scripts.
+
+## Quote and swap
+
+```ts
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { buildSwap, compileSendable, decodePool, readSwapQuoteAccounts, sendSolanaTransactions, swapTickArrays } from '@floorsupply/carpenter-sdk';
+import { initQuote } from '@floorsupply/carpenter-sdk/quote/wasm';
+import { getBase64EncodedWireTransaction } from '@solana/kit';
+
+// Node: read the shipped wasm. A browser fetches `@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm` and passes the bytes.
+const quoter = await initQuote(readFileSync(createRequire(import.meta.url).resolve('@floorsupply/carpenter-sdk/carpenter_quote_bg.wasm')));
+
+const { value: v } = await readSwapQuoteAccounts(src, poolAddress, { radius: 4, ids });
+const q = quoter.quoteSwap({ ...v, zeroForOne: true, amountSpecified: -1_000_000n }); // negative: exact in
+const { starts } = await swapTickArrays(poolAddress, q, ids);
+
+const tx = await buildSwap({
+  trader, pool: poolAddress, poolState: decodePool(v.pool), zeroForOne: true,
+  amountSpecified: -1_000_000n, amountLimit: (q.amountOut * 99n) / 100n, // the minimum out: 1% slippage
+  tickArrayStarts: starts, ids,
+});
+const { value: bh } = await rpc.getLatestBlockhash().send();
+const { transaction } = compileSendable('swap', { feePayer: trader, instructions: tx.instructions, lifetime: bh });
+await sendSolanaTransactions(wallet, [getBase64EncodedWireTransaction(transaction)], rpc, { lastValidBlockHeight: bh.lastValidBlockHeight });
+```
+
+Things a trading integration must know:
+
+- **Hooked pools.** The quoter quotes pools with no swap hook. A pool whose hook takes part in swaps is refused
+  (`QuoteHookNotQuotable`) and is quoted by its hook's SDK (`@floorsupply/sdk-solana` for FLOOR pools).
+- **Slippage.** An exact-in swap's `amountLimit` is the minimum out and is required: `0` is refused unless
+  `allowNoMinimum: true`.
+- **Native SOL.** A wSOL side goes through a temporary wSOL account the builder creates, funds and closes in the same
+  transaction.
+- **Pauses.** A paused pool is refused `PoolPaused`. A guardian pause (`Pool.guardianPausedUntil`) needs the cluster's
+  clock: check `poolPausedAt(pool, nowUnix)`.
+- **Compute.** `CU_LIMITS` are estimates. Set the limit from a simulation's `unitsConsumed` when it matters.
+
+Liquidity, pool creation, the wallet prompt table and the send caveats: [`packages/sdk/README.md`](packages/sdk/README.md).
+
+## Addresses and interfaces
+
+| Account | mainnet-beta (`MAINNET_CHAIN_KEY`) | devnet (`DEVNET_CHAIN_KEY`) |
+|---|---|---|
+| `carpenter_amm` (program) | `DdeiDx4ncHo9DXGZm1GrPe7mFKv7kNU3yx95uQEV2APA` | `Arv1M4LifBrWMywvxpeAGvh37aVHPjpXPCg7sacbe3Hy` |
+| `amm_config` | `85S8wiRLyv9Urc6g9tF8gDC56F5Fq4JBu9Zub3BEtyuV` | `4MQRpJ85JE6FqBWFj47GcCoJpdFMVsLsMVPAq9865iiE` |
+
+The shipped IDL and the generated client name the mainnet program. Devnet runs the same program source under its own id:
+pass its row's ids. Machine-readable: [`packages/sdk/deployments.json`](packages/sdk/deployments.json)
+(`@floorsupply/carpenter-sdk/deployments.json`). FLOOR's program ids are in [`floor-sdk`](https://github.com/gudtekdonkey/floor-sdk#solana-programs).
+
+| What | Where | Import |
+|---|---|---|
+| IDL (`carpenter_amm`) | [`packages/sdk/idl/carpenter_amm.json`](packages/sdk/idl/carpenter_amm.json) | `@floorsupply/carpenter-sdk/idl/carpenter_amm.json` |
+| Codama client | `packages/sdk/src/generated/` | `carpenterAmm` from `@floorsupply/carpenter-sdk` |
+| Account layouts (`AmmConfig`, `Pool`, `TickArray`, `Position`, the hook allowlist, the quote roster) | `packages/sdk/src/`, `crates/carpenter-types` | `decodePool`, … from `@floorsupply/carpenter-sdk` |
+| Events | `packages/sdk/src/events.ts` | `decodeInnerInstructionEvents`, `decodeEmitCpiData`, `decodeLogEvents`, `EVENT_NAMES` from `@floorsupply/carpenter-sdk` |
+| Quote vectors (golden and chain-measured) | [`fixtures/quote-vectors/`](fixtures/quote-vectors) | — |
+
+The IDL ships without its `docs` fields and with a few error `msg` strings shortened; error names and codes are
+unchanged. `IDL_SHA256` is its hash as shipped. Governance and admin instructions are in the IDL and the generated client
+but have no builders.
+
+## Repository
 
 | Path | What |
 |---|---|
-| [`packages/sdk`](packages/sdk) | `@floorsupply/carpenter-sdk` (TypeScript): the IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, and the plain-pool quoter (wasm, bundled) |
-| [`crates/`](crates) | Rust: `carpenter-types` (layouts, seeds, constants, the hook interface), `carpenter-clmm-math` (Q64.64 CLMM math, see `NOTICE`), `carpenter-quote` (the network-free quoter, with the `HookQuoter` interface) |
-| [`wasm/`](wasm) | `carpenter-quote-wasm` (the quoter's plain-pool path behind wasm-bindgen) and `build.sh`, which builds what `packages/sdk/wasm/` ships |
+| [`packages/sdk`](packages/sdk) | `@floorsupply/carpenter-sdk`: IDL and Codama client, layouts, PDAs, reads, swap / liquidity / pool builders, the one-prompt sender, the plain-pool quoter (wasm) |
+| [`crates/`](crates) | `carpenter-types` (layouts, seeds, constants, the hook interface), `carpenter-clmm-math` (Q64.64 CLMM math, see `NOTICE`), `carpenter-quote` (the network-free quoter, with `HookQuoter`) |
+| [`wasm/`](wasm) | `carpenter-quote-wasm` and `build.sh`, which builds what `packages/sdk/wasm/` ships |
 | [`jupiter/`](jupiter) | `carpenter-amm`: a `jupiter-amm-interface` `Amm` over the quoters; its own Cargo workspace |
 | [`integrations/defillama/`](integrations/defillama) | Carpenter's DefiLlama adapters (TVL; volume and fees), kept here and copied into DefiLlama's repositories |
-| [`fixtures/quote-vectors`](fixtures/quote-vectors) | golden quote vectors (`plain.json`) and chain-measured outcomes (`parity-plain.json`) |
+| [`fixtures/quote-vectors`](fixtures/quote-vectors) | golden quote vectors and chain-measured outcomes |
 
-The programs are upgradeable through a timelock on mainnet-beta (a 10-minute delay that can only be raised, proposed by the deployer key) and by the deployer key directly on devnet, and pausable by the deployer key; nothing here claims they are audited or immutable.
-
-## Two repositories, one `HookQuoter`
-
-Hooks plug into the quoter through `carpenter_quote::HookQuoter`. FLOOR, the first approved hook, lives in
-[`floor-sdk`](https://github.com/gudtekdonkey/floor-sdk), and the two repositories depend on each other in one
-direction each:
-
-- `floor-sdk`'s Rust crates (`floor-types`, `floor-quote`) depend on this repository's `carpenter-types` and
-  `carpenter-quote`: `floor-quote` implements `HookQuoter`.
-- `jupiter/` (`carpenter-amm`) depends on `floor-sdk`'s `floor-quote` and `floor-types`, to quote FLOOR pools.
-
-Both are git dependencies pinned to the **release commit** of each repository, the commit its `v0.1.0` tag names:
-
-```toml
-# floor-sdk/rust/Cargo.toml (carpenter-sdk v0.1.0)
-carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", rev = "6996086514a27c348189f150916fedaa8536c5b5" }
-# jupiter/Cargo.toml (floor-sdk v0.1.0; this repository's own crates stay local through a [patch] of that git source)
-floor-quote     = { git = "https://github.com/gudtekdonkey/floor-sdk", rev = "72399c843d3177333ef3cbf8b06a6d78ec53f1be" }
-```
-
-The pins must agree: Cargo treats `carpenter-quote` from two different sources (a path and a git revision, or two revisions) as
-two different crates, so `floor-quote`'s `HookQuoter` implementation would not be the trait `carpenter-amm` calls.
-`cargo tree -p carpenter-amm -i carpenter-quote` must show a single `carpenter-quote`.
-
-## Build and test
-
-```sh
-cargo test --workspace                       # crates/
-(cd jupiter && cargo test)                   # the adapter, including the program parity replay
-bash jupiter/upstream/check.sh               # the adapter against the proposed upstream Swap variant
-bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
-npm ci && npm test                           # packages/sdk
-```
-
-## Clusters
-
-| Cluster | `carpenter_amm` | `amm_config` |
-|---|---|---|
-| mainnet-beta (`MAINNET_CHAIN_KEY`) | `DdeiDx4ncHo9DXGZm1GrPe7mFKv7kNU3yx95uQEV2APA` | `85S8wiRLyv9Urc6g9tF8gDC56F5Fq4JBu9Zub3BEtyuV` |
-| devnet (`DEVNET_CHAIN_KEY`) | `Arv1M4LifBrWMywvxpeAGvh37aVHPjpXPCg7sacbe3Hy` | `4MQRpJ85JE6FqBWFj47GcCoJpdFMVsLsMVPAq9865iiE` |
-
-The shipped IDL and the generated client name the mainnet program; `DEFAULT_PROGRAM_IDS` is mainnet's. Devnet runs a
-separate deployment of the same program source under its own id: pass its row's ids (below).
-
-## Adding a cluster
-
-One build serves every cluster it lists; nothing assumes a single cluster's program ids. To add a cluster:
-
-1. **`packages/sdk/deployments.json`**: add a row keyed by the cluster's CAIP-2 id.
-
-   | Field | Value | |
-   |---|---|---|
-   | `name` | the cluster's name (`"testnet"`, ...) | |
-   | `chainKey` | the row's key (`solana:` + the first 32 characters of the genesis hash) | |
-   | `programs.carpenterAmm` | the deployed program id | may differ from the IDL's `address` |
-   | `accounts.ammConfig` | `["amm_config"]` under `carpenterAmm` | derivable; checked |
-   | `accounts.protocolTreasury` | `["protocol_treasury"]` under `carpenterAmm` | derivable; checked when present |
-   | `programDataHash.carpenterAmm` | the deployed executable's hash, or `null` | |
-   | `quotes` | optional: `{ <mint>: { decimals, tokenProgram, caps, capNames, amm: { entry, listedSlot } } }` | `entry` is `["quote_mint", mint]` under `carpenterAmm`; checked |
-
-   Only the `mainnet` and `local` rows must equal the shipped IDL's `address`; any other row is checked to name base58
-   32-byte keys, and its derivable accounts are checked against that row's program id.
-2. **`crates/carpenter-types/src/ids.rs`**: add an `AmmClusterIds { name, carpenter_amm }` entry to `AMM_CLUSTERS`.
-   The router adapter (`jupiter/`) selects the cluster by the pool account's owner and refuses an owner it does not
-   list. When FLOOR is deployed on the cluster, `floor-sdk` adds its entry to `floor_types::ids::CLUSTERS`.
-3. Regenerate and rebuild:
-
-   ```sh
-   npm run generate -w @floorsupply/carpenter-sdk           # validates deployments.json → src/generated/
-   bash wasm/build.sh && npm run sync-wasm -w @floorsupply/carpenter-sdk
-   cargo test --workspace && (cd jupiter && cargo test) && npm test
-   ```
-
-Applications pass the row's ids everywhere: `programIdsFromDeployment(deploymentFor(chainKey))` as `ids` to every
-builder, PDA helper and read. `deploymentFor` throws by name for a cluster with no row.
+Building, testing, the quoter wasm and adding a cluster: [`CONTRIBUTING.md`](CONTRIBUTING.md). Changes:
+[`CHANGELOG.md`](CHANGELOG.md). Reporting a vulnerability: [`SECURITY.md`](SECURITY.md).
 
 ## License
 
