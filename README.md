@@ -7,9 +7,9 @@ and aggregators.
 
 | | |
 |---|---|
-| Release | `v0.1.0` |
+| Release | `0.1.0` |
 | npm | `@floorlaunchpad/carpenter-sdk` (peer: `@solana/kit` `8.3.0`) |
-| Rust | git dependencies at tag `v0.1.0` (not on crates.io) |
+| Rust | git dependencies at tag `0.1.0` (not on crates.io) |
 | Docs | [floor.supply/developers/carpenter](https://floor.supply/developers/carpenter) |
 | Licence | Apache-2.0 |
 
@@ -39,8 +39,8 @@ The quoter wasm is shipped in the package, so no Rust toolchain is needed.
 ```toml
 # Rust
 [dependencies]
-carpenter-types = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "v0.1.0" }
-carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "v0.1.0" }
+carpenter-types = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "0.1.0" }
+carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "0.1.0" }
 ```
 
 ## Read a pool
