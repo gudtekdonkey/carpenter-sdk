@@ -8,10 +8,10 @@ https://x.com/floordotsupply
 
 
 ##### Website Link:
-https://floor.supply
+https://crpntr.floor.supply
 
 ##### Logo (High resolution, will be shown with rounded borders):
-TODO
+https://raw.githubusercontent.com/gudtekdonkey/carpenter-sdk/main/assets/logo.png
 
 ##### Current TVL:
 About $52 on 2026-10-13: one pool, 0.488 SOL (the pool's other token has no DefiLlama price yet)
