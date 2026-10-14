@@ -22,13 +22,13 @@ direction each:
   `carpenter-quote`: `floor-quote` implements `HookQuoter`.
 - `jupiter/` (`carpenter-amm`) depends on `floor-sdk`'s `floor-quote` and `floor-types`, to quote FLOOR pools.
 
-Both are git dependencies pinned to a commit of each repository whose crates are the `0.1.0` release's:
+Both are git dependencies pinned to each repository's `0.1.0` release tag:
 
 ```toml
-# floor-sdk/rust/Cargo.toml (carpenter-sdk v0.1.0)
-carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", rev = "6996086514a27c348189f150916fedaa8536c5b5" }
-# jupiter/Cargo.toml (floor-sdk v0.1.0; this repository's own crates stay local through a [patch] of that git source)
-floor-quote     = { git = "https://github.com/gudtekdonkey/floor-sdk", rev = "72399c843d3177333ef3cbf8b06a6d78ec53f1be" }
+# floor-sdk/rust/Cargo.toml (carpenter-sdk 0.1.0)
+carpenter-quote = { git = "https://github.com/gudtekdonkey/carpenter-sdk", tag = "0.1.0" }
+# jupiter/Cargo.toml (floor-sdk 0.1.0; this repository's own crates stay local through a [patch] of that git source)
+floor-quote     = { git = "https://github.com/gudtekdonkey/floor-sdk", tag = "0.1.0" }
 ```
 
 The pins must agree: Cargo treats `carpenter-quote` from two different sources (a path and a git revision, or two revisions) as
