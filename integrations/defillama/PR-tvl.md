@@ -49,6 +49,8 @@ None.
 ##### methodology (what is being counted as tvl, how is tvl being calculated):
 The balance of every Carpenter pool's two token vaults. Pools are found by the Pool account's discriminator under the carpenter_amm program (DdeiDx4ncHo9DXGZm1GrPe7mFKv7kNU3yx95uQEV2APA).
 
+FLOOR's Solana launches graduate into Carpenter pools, so that liquidity is counted here and again by the FLOOR adapter (`projects/floor-launchpad`), which marks it `doublecounted`.
+
 ##### Github org/user (Optional, if your code is open source, we can track activity):
 gudtekdonkey
 
