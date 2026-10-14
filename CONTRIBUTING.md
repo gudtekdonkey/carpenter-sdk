@@ -22,7 +22,7 @@ direction each:
   `carpenter-quote`: `floor-quote` implements `HookQuoter`.
 - `jupiter/` (`carpenter-amm`) depends on `floor-sdk`'s `floor-quote` and `floor-types`, to quote FLOOR pools.
 
-Both are git dependencies pinned to the **release commit** of each repository, the commit its `v0.1.0` tag names:
+Both are git dependencies pinned to a commit of each repository whose crates are the `v0.1.0` release's:
 
 ```toml
 # floor-sdk/rust/Cargo.toml (carpenter-sdk v0.1.0)
