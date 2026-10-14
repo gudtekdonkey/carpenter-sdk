@@ -2,22 +2,22 @@
 Carpenter
 
 ##### Twitter Link:
-TODO
+https://x.com/floordotsupply
 
 ##### List of audit links if any:
-TODO
+
 
 ##### Website Link:
-TODO
+https://floor.supply
 
 ##### Logo (High resolution, will be shown with rounded borders):
 TODO
 
 ##### Current TVL:
-TODO at submission: the adapter's own output
+About $52 on 2026-10-13: one pool, 0.488 SOL (the pool's other token has no DefiLlama price yet)
 
 ##### Treasury Addresses (if the protocol has treasury)
-TODO
+Not counted in TVL. The carpenter_amm program's protocol treasury account, which owns the token accounts the protocol fee is swept into: `G7URMTZpyVendaTXEki7emtvvB1UirZFfdvruYy8h66r` (`projects/treasury/carpenter.js`)
 
 ##### Chain:
 Solana
